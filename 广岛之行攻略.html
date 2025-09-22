@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>福冈-大阪 13日交互式行程攻略</title>
+    <style>
+        :root {
+            --primary-color: #005f73;
+            --secondary-color: #0a9396;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+            --nav-bg: #fff;
+            --border-color: #e0e0e0;
+            --header-height: 60px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.7;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        /* --- Navigation Menu --- */
+        #table-of-contents {
+            width: 280px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: var(--nav-bg);
+            border-right: 1px solid var(--border-color);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            overflow-y: auto;
+            padding-top: 20px;
+        }
+
+        #table-of-contents h3 {
+            padding: 0 20px 10px 20px;
+            margin: 0;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            display: inline-block;
+            margin-left: 20px;
+        }
+
+        .menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .menu-list li a {
+            text-decoration: none;
+            color: var(--text-color);
+            display: block;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-list > li > a { /* Level 1 */
+            font-weight: bold;
+            color: var(--primary-color);
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .menu-list > li > a::after {
+            content: '▼';
+            font-size: 0.7em;
+            position: absolute;
+            right: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .menu-list > li.active > a::after {
+            transform: rotate(-180deg);
+        }
+
+        .submenu {
+            list-style: none;
+            padding-left: 15px;
+            background: #f8f9fa;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out;
+        }
+
+        .submenu li a {
+            color: #555;
+            padding-left: 25px;
+        }
+
+        .submenu li a:hover, .menu-list > li > a:hover {
+            background-color: #e9ecef;
+            color: var(--secondary-color);
+        }
+
+        /* --- Main Content --- */
+        #main-content {
+            margin-left: 280px;
+            padding: 30px 40px;
+            width: calc(100% - 280px - 80px); /* 100% - nav_width - padding */
+        }
+        
+        .content-section {
+            margin-bottom: 50px;
+            padding-top: 20px; /* Offset for fixed header */
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+            font-size: 2em;
+        }
+        
+        h3 {
+           font-size: 1.5em;
+           color: #333;
+        }
+
+        .day-plan {
+            margin-bottom: 40px;
+            padding: 20px;
+            border-left: 4px solid var(--secondary-color);
+            background-color: #fff;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+
+        .highlight {
+            background-color: #e6f7ff;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #1890ff;
+            margin: 20px 0;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            #table-of-contents {
+                position: relative;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            #main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            .container {
+                flex-direction: column;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <nav id="table-of-contents">
+            <h3>行程目录</h3>
+            <ul class="menu-list">
+                <li>
+                    <a class="menu-toggle">交通方案</a>
+                    <ul class="submenu">
+                        <li><a href="#transport">JR Pass选择</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="menu-toggle">广岛及周边 (4晚)</a>
+                    <ul class="submenu">
+                        <li><a href="#day1">Day 1: 抵达广岛</a></li>
+                        <li><a href="#day2">Day 2: 广岛市区</a></li>
+                        <li><a href="#day3">Day 3: 宫岛全日游</a></li>
+                        <li><a href="#day4">Day 4: 吴市一日游</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="menu-toggle">尾道及周边 (4晚)</a>
+                    <ul class="submenu">
+                        <li><a href="#day5">Day 5: 前往尾道</a></li>
+                        <li><a href="#day6">Day 6: 尾道深度探索</a></li>
+                        <li><a href="#day7">Day 7: 岛波海道骑行</a></li>
+                        <li><a href="#day8">Day 8: 竹原怀旧之旅</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="menu-toggle">福山 (2晚)</a>
+                    <ul class="submenu">
+                        <li><a href="#day9">Day 9: 探访鞆之浦</a></li>
+                        <li><a href="#day10">Day 10: 城堡与玫瑰</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="menu-toggle">大阪 (1晚)</a>
+                    <ul class="submenu">
+                        <li><a href="#day11">Day 11: 抵达大阪</a></li>
+                        <li><a href="#day12">Day 12: 大阪自由探索</a></li>
+                        <li><a href="#day13">Day 13: 愉快返程</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <main id="main-content">
+            <h1>福冈-大阪 13日“不回头”深度游攻略</h1>
+            
+            <div id="transport" class="content-section">
+                <h2>核心交通方案：JR Pass选择与对比</h2>
+                <div class="day-plan">
+                    <h3>JR西日本铁路周游券 (关西&广岛地区)</h3>
+                    <ul>
+                        <li><strong>价格：</strong> 17,000日元 (5日券)</li>
+                        <li><strong>覆盖范围：</strong> 完美覆盖从博多(Hakata)到大阪(Osaka)的新干线、JR在来线，以及前往宫岛的JR渡轮。是本次行程的<strong>最佳选择</strong>。</li>
+                        <li><strong>价格对比：</strong></li>
+                    </ul>
+                    <table>
+                        <thead>
+                            <tr><th>区间</th><th>单独购票价格 (自由席)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>博多 (Hakata) → 广岛 (Hiroshima) (新干线)</td><td>约 8,900 日元</td></tr>
+                            <tr><td>广岛 (Hiroshima) ↔ 宫岛口 (Miyajimaguchi) (JR+渡轮往返)</td><td>约 1,200 日元</td></tr>
+                            <tr><td>福山 (Fukuyama) → 新大阪 (Shin-Osaka) (新干线)</td><td>约 7,800 日元</td></tr>
+                            <tr><td><strong>总计 (仅主要干线)</strong></td><td><strong>约 17,900 日元 + 其他JR费用</strong></td></tr>
+                        </tbody>
+                    </table>
+                    <div class="highlight">
+                        <strong>结论：</strong> 购买5日券 <strong>非常划算</strong>。建议将周游券用在交通费用最高昂的5天，例如从福冈到广岛，以及广岛周边移动和最后前往大阪的行程中。
+                    </div>
+                </div>
+            </div>
+
+            <div id="hiroshima" class="content-section">
+                <h2>第一站：广岛 (Hiroshima) 及周边 (共4晚)</h2>
+                <div id="day1" class="day-plan">
+                    <h3>Day 1: 福冈抵达，直奔广岛</h3>
+                    <ul>
+                        <li><strong>上午/中午:</strong> 抵达福冈机场(Fukuoka Airport)，办理入境。直接在机场或博多站(Hakata Station)兑换/购买JR Pass并划定新干线座位。</li>
+                        <li><strong>交通:</strong> 从福冈机场搭乘地铁至博多站(约5分钟)，然后乘坐JR山阳新干线(Sanyo Shinkansen)前往广岛站(Hiroshima Station) (约70分钟)。</li>
+                        <li><strong>下午:</strong> 抵达广岛，前往酒店办理入住。推荐住在广岛站附近或市中心纸屋町(Kamiyacho)区域。</li>
+                        <li><strong>晚上:</strong> 前往“广岛烧村”(お好み村)，品尝地道的广岛烧作为晚餐。</li>
+                    </ul>
+                </div>
+                 <div id="day2" class="day-plan">
+                    <h3>Day 2: 历史的反思 - 广岛市区</h3>
+                    <ul>
+                        <li><strong>上午:</strong> 参观<strong>和平纪念公园 (Peace Memorial Park)</strong>，包括<strong>原子弹爆炸圆顶屋 (A-Bomb Dome)</strong>、<strong>广岛和平纪念资料馆 (Hiroshima Peace Memorial Museum)</strong>。</li>
+                        <li><strong>下午:</strong> 参观<strong>广岛城 (Hiroshima Castle)</strong>和<strong>缩景园 (Shukkei-en Garden)</strong>。</li>
+                    </ul>
+                </div>
+                <div id="day3" class="day-plan">
+                    <h3>Day 3: 神之岛屿 - 宫岛 (Miyajima) 全日游</h3>
+                    <ul>
+                        <li><strong>交通:</strong> 从广岛站乘坐JR山阳本线至宫岛口站(Miyajimaguchi Station) (约25分钟)，换乘JR渡轮(约10分钟)前往宫岛。JR Pass包含此段渡轮费用。</li>
+                        <li><strong>活动:</strong> 根据潮汐时间观赏<strong>严岛神社 (Itsukushima Shrine)</strong>的海上大鸟居。登上<strong>弥山 (Mount Misen)</strong>俯瞰濑户内海。</li>
+                        <li><strong>宫岛潮汐表演 (出行前请务必查询当日准确时间):</strong></li>
+                    </ul>
+                     <table>
+                        <thead><tr><th>日期示例</th><th>满潮 (High Tide)</th><th>干潮 (Low Tide)</th></tr></thead>
+                        <tbody><tr><td>2025/MM/DD</td><td>约 10:30 AM</td><td>约 4:30 PM</td></tr></tbody>
+                    </table>
+                </div>
+                 <div id="day4" class="day-plan">
+                    <h3>Day 4: 海军港口 - 吴市 (Kure) 一日游</h3>
+                     <ul>
+                         <li><strong>交通:</strong> 从广岛站乘坐JR吴线(Kure Line)快速列车至吴站(Kure Station) (约35分钟)。</li>
+                         <li><strong>活动:</strong> 参观<strong>大和博物馆 (Yamato Museum)</strong>和可进入真实潜艇内部的<strong>海上自卫队吴史料馆 (JMSDF Kure Museum)</strong>。</li>
+                     </ul>
+                </div>
+            </div>
+            
+            <div id="onomichi" class="content-section">
+                <h2>第二站：尾道 (Onomichi) 及周边 (共4晚)</h2>
+                <div id="day5" class="day-plan">
+                    <h3>Day 5: 告别广岛，前往坂道之城尾道</h3>
+                    <ul>
+                        <li><strong>行李方案:</strong> 将大件行李通过“宅急便”服务从广岛酒店寄往福山的酒店，轻装上路。</li>
+                        <li><strong>交通:</strong> 从广岛站乘坐JR山阳本线至尾道站(Onomichi Station) (约80分钟)。</li>
+                        <li><strong>活动:</strong> 抵达后入住，漫步于<strong>尾道本通商店街</strong>。</li>
+                    </ul>
+                </div>
+                <div id="day6" class="day-plan">
+                    <h3>Day 6: 古寺、猫咪与绝景 - 尾道深度探索</h3>
+                    <ul>
+                        <li><strong>活动:</strong> 乘坐<strong>千光寺山缆车</strong>上山，从<strong>千光寺公园</strong>欣赏绝景，然后沿着<strong>古寺巡礼路线</strong>和<strong>猫之细道</strong>慢慢下山。</li>
+                        <li><strong>特色美食:</strong> 尾道拉面。</li>
+                    </ul>
+                </div>
+                <div id="day7" class="day-plan">
+                    <h3>Day 7: 濑户内海骑行初体验 - 岛波海道精华段</h3>
+                     <ul>
+                        <li><strong>活动:</strong> 从尾道租自行车，乘渡轮至向岛，体验岛波海道精华段骑行（向岛 → 因岛）。</li>
+                        <li><strong>特色美食:</strong> 因岛的“はっさく屋”大福饼。</li>
+                    </ul>
+                </div>
+                <div id="day8" class="day-plan">
+                    <h3>Day 8: 小江户风情 - 竹原 (Takehara) 怀旧之旅</h3>
+                     <ul>
+                        <li><strong>交通:</strong> 从尾道乘坐JR至三原，换乘吴线到竹原。</li>
+                        <li><strong>活动:</strong> 游览被称为“安芸的小京都”的<strong>竹原町并保存地区</strong>。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="fukuyama" class="content-section">
+                 <h2>第三站：福山 (Fukuyama) - 鞆之浦与玫瑰之城 (共2晚)</h2>
+                <div id="day9" class="day-plan">
+                    <h3>Day 9: 从尾道到福山，探访悬崖上的波妞</h3>
+                    <ul>
+                        <li><strong>交通:</strong> 从尾道站乘坐JR山阳本线至福山站 (约20分钟)。</li>
+                        <li><strong>活动:</strong> 下午乘坐巴士前往宫崎骏电影《悬崖上的金鱼姬》的取景地——<strong>鞆之浦 (Tomonoura)</strong>。</li>
+                    </ul>
+                </div>
+                <div id="day10" class="day-plan">
+                    <h3>Day 10: 城堡与玫瑰的协奏曲</h3>
+                    <ul>
+                        <li><strong>活动:</strong> 参观<strong>福山城</strong>和<strong>福山玫瑰公园</strong>。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="osaka" class="content-section">
+                 <h2>最终站：大阪 (Osaka) - 美食与购物的天堂 (1晚)</h2>
+                 <div id="day11" class="day-plan">
+                    <h3>Day 11: 前往大阪，感受都市繁华</h3>
+                    <ul>
+                        <li><strong>交通:</strong> 从福山站乘坐JR山阳新干线前往新大阪站(Shin-Osaka Station) (约65分钟)。</li>
+                        <li><strong>活动:</strong> 入住后探索<strong>心斋桥、道顿堀</strong>，品尝大阪美食。</li>
+                    </ul>
+                </div>
+                 <div id="day12" class="day-plan">
+                    <h3>Day 12: 大阪自由探索/最后采购</h3>
+                    <ul>
+                        <li><strong>活动:</strong> 自由安排，可选择参观大阪城、购物或体验城市观光。</li>
+                    </ul>
+                </div>
+                 <div id="day13" class="day-plan">
+                    <h3>Day 13: 告别日本，愉快返程</h3>
+                    <ul>
+                        <li><strong>交通:</strong> 从市区乘坐南海电铁或JR前往关西国际机场(KIX)，结束旅程。</li>
+                    </ul>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggles = document.querySelectorAll('.menu-toggle');
+
+            menuToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const parentLi = this.parentElement;
+                    const submenu = this.nextElementSibling;
+
+                    parentLi.classList.toggle('active');
+
+                    if (parentLi.classList.contains('active')) {
+                        submenu.style.maxHeight = submenu.scrollHeight + "px";
+                    } else {
+                        submenu.style.maxHeight = '0';
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
